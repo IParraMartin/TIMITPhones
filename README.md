@@ -6,7 +6,7 @@ This repository contains a PyTorch ```Dataset``` builder of all sliced phonemes 
 
 
 ## Deployment
-To load the dataset, simply clone the repository and use the following:
+To load the dataset, simply clone the repository, unzip the ```timit-phones.zip``` file, and use the following:
 
 ```
 dataset = TIMITPhones(data_dir='timit-phones', sample_len=16000)
