@@ -55,11 +55,5 @@ def load_mappings(file: str = 'timit-phones/mappings.pkl'):
         mappings = pickle.load(f)
     return mappings
 
-
 if __name__ == '__main__':
     dataset = TIMITPhones()
-    example, label = dataset[0]
-    print(f"Audio shape: {example.shape}")
-    print(f"Label: {label}")
-    mappings = load_mappings()
-    print(mappings)
