@@ -1,3 +1,5 @@
 .DS_Store
 utils
 classifier
+timit-phones
+hf_version
