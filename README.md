@@ -25,6 +25,16 @@ Audio shape: torch.Size([1, 16000])
 Label: 27
 ```
 
+## Hugging Face 🤗 Availability
+
+The dataset is also available in Hugging Face Datasets. To use the dataset, copy and paste the following Python code:
+```
+from datasets import load_dataset
+
+# Login using e.g. `huggingface-cli login` to access this dataset
+ds = load_dataset("IParraMartin/TIMITPhones")
+```
+
 ### Encodings Reference
 There are 61 unique phoneme classes in the dataset. The mappings are provided below.
 ```
