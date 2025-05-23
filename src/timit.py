@@ -11,7 +11,7 @@ class TIMITPhones(torch.utils.data.Dataset):
             data_dir: str = 'timit-phones', 
             task: str = "phones", 
             sample_len: int = 16000, 
-            normalization: str = "minmax"
+            normalization: str = "standard"
         ):
         super().__init__()
         assert task in ['phones', 'groups'], "Available tasks: phones'/'groups'"
