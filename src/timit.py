@@ -6,8 +6,17 @@ import pickle
 
 
 class TIMITPhones(torch.utils.data.Dataset):
-    def __init__(self, data_dir: str = 'timit-phones', sample_len: int = 16000):
+    def __init__(
+            self, 
+            data_dir: str = 'timit-phones', 
+            task: str = "phones", 
+            sample_len: int = 16000, 
+            normalization: str = "minmax"
+        ):
         super().__init__()
+        assert task in ['phones', 'groups'], "Available tasks: phones'/'groups'"
+        self.task = task
+        self.normalization = normalization
         self.data_dir = data_dir
         self.sample_len = sample_len
         self.dataset_csv = pd.read_csv(
@@ -18,8 +27,21 @@ class TIMITPhones(torch.utils.data.Dataset):
         row = self.dataset_csv.iloc[index]
         audio_path = row['file']
         audio_path = os.path.join(self.data_dir, audio_path)
-        label = row['encoded']
+
+        if self.task == "phones":
+            label = row['encoded']
+        else:
+            label = row['category_encoded']
+        
         audio, _ = torchaudio.load(audio_path)
+
+        if self.normalization == 'minmax':
+            audio = self.normalize_minmax(audio)
+        elif self.normalization == 'standard':
+            audio = self.normalize_zscore(audio)
+        elif self.normalization == 'rms':
+            audio = self.normalize_rms(audio)
+        
         audio = self._apply_transforms(audio)
         label = torch.tensor(label, dtype=torch.long)
         return audio, label
@@ -50,10 +72,22 @@ class TIMITPhones(torch.utils.data.Dataset):
             signal = signal[:, :self.sample_len]
         return signal
 
+    def normalize_minmax(self, waveform):
+        return 2 * (waveform - waveform.min()) / (waveform.max() - waveform.min()) - 1
+
+    def normalize_zscore(self, waveform):
+        return (waveform - waveform.mean()) / waveform.std()
+
+    def normalize_rms(self, waveform, target_rms=0.1):
+        current_rms = torch.sqrt(torch.mean(waveform**2))
+        return waveform * (target_rms / current_rms)
+
+
 def load_mappings(file: str = 'timit-phones/mappings.pkl'):
     with open(file, 'rb') as f:
         mappings = pickle.load(f)
     return mappings
+
 
 if __name__ == '__main__':
     dataset = TIMITPhones()
